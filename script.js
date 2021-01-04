@@ -1,40 +1,56 @@
-var todoList = [];
+Vue.component('task',{
+  props: ['data'],
+  data() {
+    return {
+    }
+  },
+  methods: {
+    task_done(){
+      this.$emit('task_done')
+    }
+  },
+  template: `
+  <div class="task">
+    <div>
+      <h3 class="task__title">{{data.title}}</h3>
+      <p v-if="data.desc!=''" class="task__desc">{{data.desc}}</p>
+    </div>
+    <button class="task__done" @click="task_done()">✔️</button>
+  </div>`
+})
 
-if (localStorage.getItem('todo')) {
-	todoList = JSON.parse(localStorage.getItem('todo'));
-	out();
-}
-
-document.getElementById('add').onclick = function (){
-	var temp = {};
-	var item = document.getElementById('in').value;
-	temp.todo = item;
-	temp.check = false;
-	todoList.push(temp);
-	out();
-	localStorage.setItem('todo', JSON.stringify(todoList));
-}
-
-document.getElementById('out').onchange = function (event){
-	currentKey = event.target.parentNode.childNodes[1].data.slice(1);
-	for (i = 0; i<todoList.length; i++) {
-		if (todoList[i].todo == currentKey) {
-			todoList[i].check = !todoList[i].check;
-			out();
-			localStorage.setItem('todo', JSON.stringify(todoList));
-			break;
-		}
-	}
-}
-
-function out() {
-	var out = '';
-	for (var i=0; i<todoList.length; i++) {
-		if (todoList[i].check)
-			out += '<span class="underlined"><input type="checkbox" checked> '+todoList[i].todo + '</span><br>';
-		else {
-			out+='<span><input type="checkbox"> '+todoList[i].todo + '</span><br>';
-		}
-	}
-	document.getElementById('out').innerHTML = out;
-}
+var vue = new Vue({
+  el: '#app',
+  data: {
+    string: 'asdasda',
+    new_task: {
+      title: '',
+      desc: ''
+    },
+    tasks : [
+      {
+        title: 'Изучить основы vue.js',
+        desc: 'Попробовать написать калькулятор',
+      },
+      {
+        title: 'Прочитать книгу "Vue.js в действии"',
+        desc: '',
+      }
+    ]
+  },
+  methods: {
+    add_task(){
+      if(this.new_task.title != ''){
+        this.tasks.push({
+          title: this.new_task.title,
+          desc: this.new_task.desc
+        });
+        this.new_task.title='';
+        this.new_task.desc='';
+      }
+    },
+    delete_task(id){
+      this.tasks.splice(id,1);
+    }
+  }
+})
